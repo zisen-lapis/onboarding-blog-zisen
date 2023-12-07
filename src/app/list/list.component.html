@@ -1,0 +1,7 @@
+
+<article *ngFor="let post of blogPosts">
+  <h2>
+    <a [routerLink]="post.link">{{ post.title }}</a> </h2>
+  <p>Published on {{ post.publishedDate | date }}</p>
+  <p>{{ post.content }}</p>
+</article>

@@ -1,0 +1,30 @@
+<br>
+<div [formGroup]="profile" (click)="editProfile()" (keyup.enter)="finishEdit()">
+  <div>
+    <b>Name:&nbsp;&nbsp;</b>
+    <span *ngIf="!edit">{{ profile.value.name }}</span>
+    <input *ngIf="edit" formControlName="name" />
+  </div>
+  <div>
+    <b>Address:&nbsp;&nbsp;</b>
+    <span *ngIf="!edit">{{ profile.value.address }}</span>
+    <input *ngIf="edit" formControlName="address" />
+  </div>
+  <div>
+    <b>Gender: &nbsp;&nbsp;</b>
+    <span *ngIf="!edit">{{ profile.value.gender | gender }}</span>
+    <span *ngIf="edit">
+          <input type="radio" formControlName="gender" [value]="true" [checked]="profile.value.gender === true" /> male
+          <input type="radio" formControlName="gender" [value]="false" [checked]="profile.value.gender === false"/> female
+    </span>
+  </div>
+</div>
+<div>
+  <br><br>
+  <div (click)="fromEvent()">
+    edit time: {{ editTime | date:'yyyy-MM-dd HH:mm:ss' }}
+  </div>
+<a routerLink="/list">return</a>
+</div>
+
+<!--<button (click)="showGender()">whats my gender???</button>-->
