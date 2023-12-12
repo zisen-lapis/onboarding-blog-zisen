@@ -1,9 +1,14 @@
-import { Component } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {Component, inject} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
 import {GenderPipe} from "./gender.pipe";
-import {DatePipe, NgIf} from "@angular/common";
+import {AsyncPipe, DatePipe, NgIf} from "@angular/common";
 import {RouterLink} from "@angular/router";
-import { fromEvent} from "rxjs"
+import {fromEvent, Observable} from "rxjs"
+import {Gender, IProfile} from "./profile.interface";
+import {Store} from "@ngrx/store";
+import {editProfile} from "../store/actions/profile.action";
+import {LetDirective} from "@ngrx/component";
+
 @Component({
   selector: 'app-profile',
   standalone: true,
@@ -12,32 +17,60 @@ import { fromEvent} from "rxjs"
     GenderPipe,
     NgIf,
     RouterLink,
-    DatePipe
+    DatePipe,
+    AsyncPipe,
+    LetDirective
   ],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  styleUrl: './profile.component.scss'
 })
 export class ProfileComponent {
-  constructor(private fb: FormBuilder){
-  }
+  private store = inject(Store);
+  private fb = inject(FormBuilder);
 
-  edit = false;
-  editTime = new Date();
+  storedProfile$?: Observable<IProfile> = this.store.select('profile');
+
+  isEditing = false;
+
   profile = this.fb.group(
     {
       name:['',Validators.required],
       address:[''],
-      gender:[true],
+      gender: [Gender.Male],
+      editTime:[new Date()]
     }
   )
 
+  get editTime() {
+    return this.profile.get('editTime')?.value as Date;
+  }
+  set editTime(value: Date) {
+    this.profile.get('editTime')?.setValue(value);
+  }
   editProfile() {
-    this.edit = true;
+    // prevent loading repeatedly while editing
+    if (this.isEditing){
+      return;
+    }
+
+    // load saved data from storage
+    this.storedProfile$?.subscribe((profile) => {
+      this.profile.patchValue(profile);
+    });
+    this.isEditing = true;
   }
 
   finishEdit() {
-    this.edit = false;
+    this.isEditing = false;
     this.editTime = new Date();
+    this.store.dispatch(editProfile(
+        {
+          name: this.profile.value.name,
+          address: this.profile.value.address,
+          gender: this.profile.value.gender,
+          editTime: this.profile.value.editTime
+        }
+    ))
   }
 
   showGender() {
@@ -49,4 +82,7 @@ export class ProfileComponent {
       console.log('Clicked!')
     })
   }
+
+
+  Gender = Gender;
 }
