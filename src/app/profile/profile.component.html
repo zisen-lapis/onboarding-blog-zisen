@@ -1,30 +1,29 @@
 <br>
-<div [formGroup]="profile" (click)="editProfile()" (keyup.enter)="finishEdit()">
-  <div>
+<article [formGroup]="profile" (click)="editProfile()" (keyup.enter)="finishEdit()" *ngrxLet="storedProfile$ | async as s">
+  <section>
     <b>Name:&nbsp;&nbsp;</b>
-    <span *ngIf="!edit">{{ profile.value.name }}</span>
-    <input *ngIf="edit" formControlName="name" />
-  </div>
-  <div>
+    <span *ngIf="!isEditing">{{ s?.name }}</span>
+    <input *ngIf="isEditing" formControlName="name" />
+  </section>
+  <section>
     <b>Address:&nbsp;&nbsp;</b>
-    <span *ngIf="!edit">{{ profile.value.address }}</span>
-    <input *ngIf="edit" formControlName="address" />
-  </div>
-  <div>
+    <span *ngIf="!isEditing">{{ s?.address }}</span>
+    <input *ngIf="isEditing" formControlName="address" />
+  </section>
+  <section>
     <b>Gender: &nbsp;&nbsp;</b>
-    <span *ngIf="!edit">{{ profile.value.gender | gender }}</span>
-    <span *ngIf="edit">
-          <input type="radio" formControlName="gender" [value]="true" [checked]="profile.value.gender === true" /> male
-          <input type="radio" formControlName="gender" [value]="false" [checked]="profile.value.gender === false"/> female
+    <span *ngIf="!isEditing">{{ s?.gender }}</span>
+    <span *ngIf="isEditing">
+          <input type="radio" formControlName="gender" [value]="Gender.Male" [checked]="profile.value.gender === Gender.Male" /> Male
+          <input type="radio" formControlName="gender" [value]="Gender.Female" [checked]="profile.value.gender === Gender.Female"/> Female
     </span>
-  </div>
-</div>
-<div>
+  </section>
+
   <br><br>
-  <div (click)="fromEvent()">
-    edit time: {{ editTime | date:'yyyy-MM-dd HH:mm:ss' }}
-  </div>
+  <section (click)="fromEvent()">
+    edit time: {{ s?.editTime | date:'yyyy-MM-dd HH:mm:ss' }}
+  </section>
 <a routerLink="/list">return</a>
-</div>
+</article>
 
 <!--<button (click)="showGender()">whats my gender???</button>-->

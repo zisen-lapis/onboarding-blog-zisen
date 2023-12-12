@@ -1,5 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+/**
+ * Replaced by gender enum
+ */
 @Pipe({
   name: 'gender',
   standalone: true

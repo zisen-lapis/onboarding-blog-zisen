@@ -1,13 +1,12 @@
-<div>
-  <h1>
-    Blog
-  </h1>
-</div>
-<!--menu with profile settings, new blog and so on-->
-<div>
-  <a routerLink="/profile">Profile</a>
-</div>
-<div>
+<mat-toolbar color="primary">
+  <span>Blog</span>
+  <span class="spacer"></span>
+    <button mat-button routerLink="/list">Sample Posts</button>
+    <button mat-button routerLink="/blogs/list">User's Posts</button>
+    <button mat-button routerLink="/profile">Profile</button>
+    <button mat-button routerLink="/blogs/new">New Blog</button>
+</mat-toolbar>
+
+
   <router-outlet>
   </router-outlet>
-</div>
