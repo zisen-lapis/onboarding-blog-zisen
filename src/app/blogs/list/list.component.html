@@ -1,0 +1,8 @@
+<h2 *ngrxLet="profile$ | async as p">Blogs of {{ p?.name }}</h2>
+<article *ngFor="let blog of (blogs$ | async)">
+  <section>
+    <h3><a [routerLink]="['/blogs/list/',blog.id]">{{blog.title}}</a> </h3>
+    <p>created by {{blog.author}} on {{blog.editedTime | date:"dd/MM/YYYY HH:mm"}}</p>
+  </section>
+  <p>{{blog.content | slice:0:20}} ...</p>
+</article>

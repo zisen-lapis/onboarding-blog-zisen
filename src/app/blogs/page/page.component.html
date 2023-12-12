@@ -1,0 +1,9 @@
+<article [formGroup]="blog" *ngrxLet="blog$ | async as b" (click)="editBlog()">
+    <h3 *ngIf="!isEditing">{{ b?.title?? "" }}</h3>
+    <input *ngIf="isEditing" placeholder="Title" formControlName="title"/>
+    <p *ngIf="!isEditing">{{ b?.content?? "" }}</p>
+    <p>
+        <textarea *ngIf="isEditing" placeholder="Content" formControlName="content"></textarea>
+    </p>
+    <button *ngIf="isEditing" (click)="updateBlog()">Update</button>
+</article>

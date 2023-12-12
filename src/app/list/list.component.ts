@@ -12,19 +12,19 @@ import {CommonModule} from "@angular/common";
     CommonModule
   ],
   templateUrl: './list.component.html',
-  styleUrl: './list.component.css'
+  styleUrl: './list.component.scss'
 })
 export class ListComponent {
   blogPosts = [
     {
       title: 'Post 1',
-      content: 'This is the first post\'s content.',
+      content: '3. Sign in with Apple ID: ...',
       publishedDate: '2021-01-01',
       link: '/post-one'
     },
     {
       title: 'Post 2',
-      content: 'This is the second post\'s content.',
+      content: '4. Configure iMessage: ...',
       publishedDate: '2021-01-02',
       link: '/post-two'
     },

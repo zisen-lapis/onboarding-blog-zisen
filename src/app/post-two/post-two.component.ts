@@ -8,7 +8,7 @@ import {RouterLink} from "@angular/router";
         RouterLink
     ],
   templateUrl: './post-two.component.html',
-  styleUrl: './post-two.component.css'
+  styleUrl: './post-two.component.scss'
 })
 export class PostTwoComponent {
 
