@@ -1,5 +1,5 @@
 import {Component, inject} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
+import {FormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {GenderPipe} from "./gender.pipe";
 import {AsyncPipe, DatePipe, NgIf} from "@angular/common";
 import {RouterLink} from "@angular/router";
@@ -8,6 +8,9 @@ import {Gender, IProfile} from "./profile.interface";
 import {Store} from "@ngrx/store";
 import {editProfile} from "../store/actions/profile.action";
 import {LetDirective} from "@ngrx/component";
+import {MatInputModule} from "@angular/material/input";
+import {MatRadioModule} from "@angular/material/radio";
+import {MatButtonModule} from "@angular/material/button";
 
 @Component({
   selector: 'app-profile',
@@ -19,7 +22,10 @@ import {LetDirective} from "@ngrx/component";
     RouterLink,
     DatePipe,
     AsyncPipe,
-    LetDirective
+    LetDirective,
+    MatInputModule,
+    MatRadioModule,
+    MatButtonModule
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'

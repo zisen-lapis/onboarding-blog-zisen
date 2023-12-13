@@ -1,8 +1,12 @@
 <h2>Create New Blog</h2>
-<form [formGroup]="blogPostForm" >
-<input type="text" formControlName="title" placeholder="Title" width="2000">
-    <br><br>
-<textarea formControlName="content" placeholder="Content" rows="10" cols="50"></textarea>
-    <br><br>
-    <input type="submit" value="Submit" (click)="onSubmit()">
-</form>
+<section class="new-blog-container">
+
+    <form [formGroup]="blogPostForm" >
+    <input type="text" formControlName="title" placeholder="Title" class="wide-input">
+        <br><br>
+    <textarea formControlName="content" placeholder="Content" rows="10" cols="50" class="wide-input"></textarea>
+        <br><br>
+        <button mat-raised-button color="accent" (click)="onSubmit()" class="btn btn-primary">Create</button>
+    </form>
+
+</section>

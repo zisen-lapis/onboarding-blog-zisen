@@ -1,29 +1,56 @@
-<br>
-<article [formGroup]="profile" (click)="editProfile()" (keyup.enter)="finishEdit()" *ngrxLet="storedProfile$ | async as s">
+<h2>Profile</h2>
+<article class="profile-container" [formGroup]="profile" *ngrxLet="storedProfile$ | async as s">
   <section>
-    <b>Name:&nbsp;&nbsp;</b>
+    <b *ngIf="!isEditing">Name:&nbsp;&nbsp;</b>
     <span *ngIf="!isEditing">{{ s?.name }}</span>
-    <input *ngIf="isEditing" formControlName="name" />
+    <mat-form-field appearance="fill" *ngIf="isEditing">
+      <mat-label>Name</mat-label>
+      <input matInput placeholder="Name" formControlName="name">
+    </mat-form-field>
   </section>
   <section>
-    <b>Address:&nbsp;&nbsp;</b>
+    <b *ngIf="!isEditing">Address:&nbsp;&nbsp;</b>
     <span *ngIf="!isEditing">{{ s?.address }}</span>
-    <input *ngIf="isEditing" formControlName="address" />
+    <mat-form-field appearance="fill" *ngIf="isEditing">
+      <mat-label>Address</mat-label>
+      <input matInput placeholder="Name" formControlName="address">
+    </mat-form-field>
   </section>
   <section>
-    <b>Gender: &nbsp;&nbsp;</b>
+    <b *ngIf="!isEditing">Gender: &nbsp;&nbsp;</b>
     <span *ngIf="!isEditing">{{ s?.gender }}</span>
-    <span *ngIf="isEditing">
-          <input type="radio" formControlName="gender" [value]="Gender.Male" [checked]="profile.value.gender === Gender.Male" /> Male
-          <input type="radio" formControlName="gender" [value]="Gender.Female" [checked]="profile.value.gender === Gender.Female"/> Female
-    </span>
+<!--    <span *ngIf="isEditing">-->
+<!--          <input type="radio" formControlName="gender" [value]="Gender.Male" [checked]="profile.value.gender === Gender.Male" /> Male-->
+<!--          <input type="radio" formControlName="gender" [value]="Gender.Female" [checked]="profile.value.gender === Gender.Female"/> Female-->
+<!--    </span>-->
+    <mat-radio-group
+            aria-labelledby="example-radio-group-label"
+            class="example-radio-group"
+            formControlName="gender"
+            *ngIf="isEditing"
+    >
+      <mat-radio-button
+              class="example-radio-button"
+              [value]="Gender.Male"
+              [checked]="profile.value.gender === Gender.Male"
+      >Male</mat-radio-button>
+      <mat-radio-button
+              class="example-radio-button"
+              [value]="Gender.Female"
+              [checked]="profile.value.gender === Gender.Female"
+      >Female</mat-radio-button>
+
+    </mat-radio-group>
   </section>
 
   <br><br>
   <section (click)="fromEvent()">
-    edit time: {{ s?.editTime | date:'yyyy-MM-dd HH:mm:ss' }}
+    Edited time: {{ s?.editTime | date:'yyyy-MM-dd HH:mm:ss' }}
   </section>
-<a routerLink="/list">return</a>
+  <br><br>
+  <button mat-raised-button color="primary" *ngIf="!isEditing" (click)="editProfile()">Update Profile</button>
+  <button mat-raised-button color="accent" *ngIf="isEditing" (click)="finishEdit()">Save Profile</button>
+
 </article>
 
 <!--<button (click)="showGender()">whats my gender???</button>-->

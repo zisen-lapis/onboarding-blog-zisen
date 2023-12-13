@@ -1,6 +1,6 @@
-import {Component, inject, Input} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {Store} from "@ngrx/store";
-import {selectBlogWithID, selectFeatureBlogs} from "../../store/selectors/blogs.selectors";
+import {selectBlogWithID} from "../../store/selectors/blogs.selectors";
 import {ActivatedRoute} from "@angular/router";
 import {Observable, Subscription} from "rxjs";
 import {IBlogs} from "../blogs.interface";
@@ -8,6 +8,7 @@ import {LetDirective} from "@ngrx/component";
 import {AsyncPipe, NgIf} from "@angular/common";
 import {FormBuilder, ReactiveFormsModule} from "@angular/forms";
 import {updateBlog} from "../../store/actions/blog.action";
+import {MatButtonModule} from "@angular/material/button";
 
 @Component({
   selector: 'app-page',
@@ -16,7 +17,8 @@ import {updateBlog} from "../../store/actions/blog.action";
         LetDirective,
         AsyncPipe,
         NgIf,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatButtonModule
     ],
   templateUrl: './page.component.html',
   styleUrl: './page.component.scss'
