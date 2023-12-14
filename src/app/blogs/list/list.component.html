@@ -1,9 +1,14 @@
 <h2 *ngrxLet="profile$ | async as p">Posts of {{ p?.name }}</h2>
 <section class="post-container">
-  <mat-card class="example-card" *ngFor="let post of blogPosts" [routerLink]="post.link" >
+  <mat-card
+    class="example-card"
+    *ngFor="let post of blogPosts"
+    [routerLink]="post.link">
     <mat-card-header>
-      <mat-card-title>{{post.title}}</mat-card-title>
-      <mat-card-subtitle>Published on {{ post.publishedDate | date }}</mat-card-subtitle>
+      <mat-card-title>{{ post.title }}</mat-card-title>
+      <mat-card-subtitle
+        >Published on {{ post.publishedDate | date }}</mat-card-subtitle
+      >
     </mat-card-header>
     <mat-card-content>
       <p>
@@ -11,18 +16,23 @@
       </p>
     </mat-card-content>
   </mat-card>
-  <mat-card class="example-card" *ngFor="let blog of (blogs$ | async)" [routerLink]="['/blogs/list/',blog.id]" >
+  <mat-card
+    class="example-card"
+    *ngFor="let blog of blogs$ | async"
+    [routerLink]="['/blogs/list/', blog.id]">
     <mat-card-header>
-      <mat-card-title>{{blog.title}}</mat-card-title>
-      <mat-card-subtitle>Created by {{blog.author}} on {{blog.editedTime | date:"dd/MM/YYYY HH:mm"}}</mat-card-subtitle>
+      <mat-card-title>{{ blog.title }}</mat-card-title>
+      <mat-card-subtitle
+        >Created by {{ blog.author }} on
+        {{ blog.editedTime | date: 'dd/MM/YYYY HH:mm' }}</mat-card-subtitle
+      >
     </mat-card-header>
     <mat-card-content>
-      <p>
-        {{blog.content | slice:0:20}} ...
-      </p>
+      <p>{{ blog.content | slice: 0 : 20 }} ...</p>
     </mat-card-content>
   </mat-card>
 </section>
+<button mat-raised-button color="primary" (click)="getBlogs()">Get Blog</button>
 
 <!--<article *ngFor="let blog of (blogs$ | async)">-->
 <!--  <section>-->
