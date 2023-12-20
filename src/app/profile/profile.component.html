@@ -2,73 +2,67 @@
 <article
   class="profile-container"
   [formGroup]="profile"
-  *ngrxLet="storedProfile$ | async as s"
->
-  <section>
-    <b *ngIf="!isEditing">Name:&nbsp;&nbsp;</b>
-    <span *ngIf="!isEditing">{{ s?.name }}</span>
-    <mat-form-field appearance="fill" *ngIf="isEditing">
-      <mat-label>Name</mat-label>
-      <input matInput placeholder="Name" formControlName="name" />
-    </mat-form-field>
-  </section>
-  <section>
-    <b *ngIf="!isEditing">Address:&nbsp;&nbsp;</b>
-    <span *ngIf="!isEditing">{{ s?.address }}</span>
-    <mat-form-field appearance="fill" *ngIf="isEditing">
-      <mat-label>Address</mat-label>
-      <input matInput placeholder="Name" formControlName="address" />
-    </mat-form-field>
-  </section>
-  <section>
-    <b *ngIf="!isEditing">Gender: &nbsp;&nbsp;</b>
-    <span *ngIf="!isEditing">{{ s?.gender }}</span>
-    <!--    <span *ngIf="isEditing">-->
-    <!--          <input type="radio" formControlName="gender" [value]="Gender.Male" [checked]="profile.value.gender === Gender.Male" /> Male-->
-    <!--          <input type="radio" formControlName="gender" [value]="Gender.Female" [checked]="profile.value.gender === Gender.Female"/> Female-->
-    <!--    </span>-->
-    <mat-radio-group
-      aria-labelledby="example-radio-group-label"
-      class="example-radio-group"
-      formControlName="gender"
-      *ngIf="isEditing"
-    >
-      <mat-radio-button
-        class="example-radio-button"
-        [value]="Gender.Male"
-        [checked]="profile.value.gender === Gender.Male"
-        >Male</mat-radio-button
-      >
-      <mat-radio-button
-        class="example-radio-button"
-        [value]="Gender.Female"
-        [checked]="profile.value.gender === Gender.Female"
-        >Female</mat-radio-button
-      >
-    </mat-radio-group>
-  </section>
-
+  *ngrxLet="storedProfile$ | async as s">
+  @if (!isEditing) {
+    <section>
+      <b>Name:&nbsp;&nbsp;</b>
+      <span>{{ s?.name }}</span>
+    </section>
+    <section>
+      <b>Address:&nbsp;&nbsp;</b>
+      <span>{{ s?.address }}</span>
+    </section>
+    <section>
+      <b>Gender: &nbsp;&nbsp;</b>
+      <span>{{ s?.gender }}</span>
+    </section>
+  }
+  @if (isEditing) {
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input matInput placeholder="Name" formControlName="name" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-form-field appearance="fill">
+        <mat-label>Address</mat-label>
+        <input matInput placeholder="Name" formControlName="address" />
+      </mat-form-field>
+    </section>
+    <section>
+      <mat-radio-group
+        aria-labelledby="example-radio-group-label"
+        class="example-radio-group"
+        formControlName="gender">
+        <mat-radio-button
+          class="example-radio-button"
+          [value]="Gender.Male"
+          [checked]="profile.value.gender === Gender.Male"
+          >Male</mat-radio-button
+        >
+        <mat-radio-button
+          class="example-radio-button"
+          [value]="Gender.Female"
+          [checked]="profile.value.gender === Gender.Female"
+          >Female</mat-radio-button
+        >
+      </mat-radio-group>
+    </section>
+  }
   <br /><br />
   <section>
-    Edited time: {{ s?.editTime | date: "yyyy-MM-dd HH:mm:ss" }}
+    Edited time: {{ s?.editTime | date: 'yyyy-MM-dd HH:mm:ss' }}
   </section>
   <br /><br />
-  <button
-    mat-raised-button
-    color="primary"
-    *ngIf="!isEditing"
-    (click)="editProfile()"
-  >
-    Update Profile
-  </button>
-  <button
-    mat-raised-button
-    color="accent"
-    *ngIf="isEditing"
-    (click)="finishEdit()"
-  >
-    Save Profile
-  </button>
+  @if (!isEditing) {
+    <button mat-raised-button color="primary" (click)="editProfile()">
+      Update Profile
+    </button>
+  }
+  @if (isEditing) {
+    <button mat-raised-button color="accent" (click)="finishEdit()">
+      Save Profile
+    </button>
+  }
 </article>
-
-<!--<button (click)="showGender()">whats my gender???</button>-->

@@ -1,21 +1,16 @@
 import { ActionReducerMap, MetaReducer } from '@ngrx/store';
-import { profileReducer } from './reducers/profile.reducer';
-import { IProfile } from '../profile/profile.interface';
-import { IBlogs } from '../blogs/blogs.interface';
-import { blogReducer } from './reducers/blogs.reducer';
-import { storageMetaReducer } from './reducers/storage.metareducer';
+import {
+  PROFILE_FEATURE_KEY,
+  profileReducer,
+} from '../profile/profile.reducer';
+import { blogReducer, BLOGS_FEATURE_KEY } from '../blogs/blogs.reducer';
+import { storageMetaReducer } from './storage.metareducer';
 
-export interface State {
-  profile: IProfile;
-  blogs: {
-    upcomingId: number;
-    blogs: IBlogs[];
-  };
-}
+export interface State {}
 
 export const reducers: ActionReducerMap<State> = {
-  profile: profileReducer,
-  blogs: blogReducer,
+  [PROFILE_FEATURE_KEY]: profileReducer,
+  [BLOGS_FEATURE_KEY]: blogReducer,
 };
 
 export const metaReducers: MetaReducer<State>[] = [storageMetaReducer];

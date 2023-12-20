@@ -1,6 +1,6 @@
 import { ActionReducer } from '@ngrx/store';
 import { merge, pick } from 'lodash-es';
-import { State } from '../index';
+import { State } from './index';
 
 function setSavedState(state: object, localStorageKey: string) {
   localStorage.setItem(localStorageKey, JSON.stringify(state));

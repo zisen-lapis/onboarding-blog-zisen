@@ -1,50 +1,54 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectBlogWithID } from '../../store/selectors/blogs.selectors';
+import { selectBlogById, selectFetchedById } from '../blogs.selectors';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { IBlogs } from '../blogs.interface';
+import { IBlogs, IBlogsState } from '../blogs';
 import { LetDirective } from '@ngrx/component';
-import { AsyncPipe, NgIf } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { updateBlog } from '../../store/actions/blog.action';
+import { updateBlog } from '../blogs.action';
 import { MatButtonModule } from '@angular/material/button';
-
+import { isNilOrEmpty } from '../../ramda-functions';
+import { isNil } from 'rambda';
+// import { isNilOrEmpty } from '../../ramda-functions';
+// import { isNilOrEmpty } from '@ngrx/component';
 @Component({
   selector: 'app-page',
   standalone: true,
-  imports: [
-    LetDirective,
-    AsyncPipe,
-    NgIf,
-    ReactiveFormsModule,
-    MatButtonModule,
-  ],
+  imports: [LetDirective, AsyncPipe, ReactiveFormsModule, MatButtonModule],
   templateUrl: './page.component.html',
   styleUrl: './page.component.scss',
 })
 export class PageComponent implements OnInit, OnDestroy {
-  private store = inject(Store);
+  private blogStore = inject(Store<IBlogsState>);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
 
   blog = this.fb.group({
     title: [''],
     content: [''],
-    id: [0],
+    id: [''],
     editedTime: [new Date()],
     author: [''],
   });
 
-  blog$ = new Observable<IBlogs | undefined>();
+  blog$!: Observable<IBlogs | undefined>;
   private sub: Subscription = new Subscription();
   isEditing: boolean = false;
   ngOnInit(): void {
     this.sub = this.route.paramMap.subscribe(params => {
       const id = params.get('id');
-      if (id !== null && id !== undefined && id !== '') {
-        this.blog$ = this.store.select(selectBlogWithID({ id: parseInt(id) }));
+      if (!isNilOrEmpty(id!)) {
+        // if (id !== null && id !== '') {
+        this.blog$ = this.blogStore.select(selectBlogById({ id: id! }));
       }
+      // check if the blog$ has value
+      this.blog$.subscribe(blog => {
+        if (isNil(blog) || isNilOrEmpty(blog?.id ?? '')) {
+          this.blog$ = this.blogStore.select(selectFetchedById({ id: id! }));
+        }
+      });
     });
   }
 
@@ -54,13 +58,17 @@ export class PageComponent implements OnInit, OnDestroy {
 
   updateBlog() {
     this.isEditing = false;
-    this.store.dispatch(
+    const change: IBlogs = {
+      title: this.blog.value.title ?? '',
+      content: this.blog.value.content ?? '',
+      id: this.blog.value.id ?? '',
+      editedTime: this.blog.value.editedTime ?? new Date(),
+      author: this.blog.value.author ?? '',
+    };
+    this.blogStore.dispatch(
       updateBlog({
-        title: this.blog.value.title ?? '',
-        content: this.blog.value.content ?? '',
-        id: this.blog.value.id ?? 0,
-        editedTime: this.blog.value.editedTime ?? new Date(),
-        author: this.blog.value.author ?? '',
+        id: change.id ?? '',
+        changes: change,
       })
     );
   }

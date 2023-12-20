@@ -1,6 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import { icon, Marker } from 'leaflet';
+import { IBlogsState } from '../blogs/blogs';
+import { Store } from '@ngrx/store';
+import { selectFetched } from '../blogs/blogs.selectors';
 
 // import {GeoJSON} from "leaflet";
 
@@ -14,6 +17,8 @@ import { icon, Marker } from 'leaflet';
 export class MapComponent implements OnInit {
   map: L.Map = {} as L.Map;
 
+  private blogsStore = inject(Store<IBlogsState>);
+  blogs$ = this.blogsStore.select(selectFetched);
   // icon = {
   //   icon: L.icon({
   //     iconSize: [25, 41],
@@ -42,24 +47,24 @@ export class MapComponent implements OnInit {
   }
 
   initializeMap() {
-    this.map = L.map('map').setView([-37.8, 144.9], 13);
-    const geojsonFeature: any = {
-      type: 'Feature',
-      properties: {
-        name: 'Coors Field',
-        amenity: 'Baseball Stadium',
-        popupContent: 'This is where the Rockies play!',
-      },
-      geometry: {
-        type: 'Point',
-        coordinates: [-37.8, 144.9],
-      },
-    };
+    this.map = L.map('map').setView(
+      [-37.81638808755261, 144.9566792258329],
+      13
+    );
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
     }).addTo(this.map);
 
-    L.geoJSON(geojsonFeature).addTo(this.map);
+    // L.geoJSON(geojsonFeature).addTo(this.map);
     // L.marker([-37.8, 144.9]).addTo(this.map);
+    // add all points from blogs$ to map
+    this.blogs$.subscribe(blogs => {
+      blogs?.forEach(blog => {
+        L.marker([blog.location?.lat ?? 0, blog.location?.lng ?? 0]).addTo(
+          this.map
+        );
+      });
+    });
   }
 }
