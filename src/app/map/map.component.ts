@@ -1,70 +1,112 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import * as L from 'leaflet';
-import { icon, Marker } from 'leaflet';
-import { IBlogsState } from '../blogs/blogs';
+import { IBlogs, IBlogsState } from '../blogs/blogs';
 import { Store } from '@ngrx/store';
 import { selectFetched } from '../blogs/blogs.selectors';
-
-// import {GeoJSON} from "leaflet";
+import { blogMarkerIcon } from './icon/icon';
+import { Router } from '@angular/router';
+import { map, distinctUntilChanged, catchError, of, Subscription } from 'rxjs';
+import 'leaflet.markercluster';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import {
+  BASEMAP_URL,
+  L_COORDINATE_MELBOURNE,
+  MAP_MAX_ZOOM,
+} from './util/constant';
 
 @Component({
   selector: 'app-map',
   standalone: true,
-  imports: [],
+  imports: [LeafletModule],
   templateUrl: './map.component.html',
   styleUrl: './map.component.scss',
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
   map: L.Map = {} as L.Map;
 
+  options = {
+    layers: [
+      L.tileLayer(BASEMAP_URL, {
+        maxZoom: MAP_MAX_ZOOM,
+      }),
+    ],
+    zoom: 15,
+    center: L_COORDINATE_MELBOURNE,
+  };
+
+  // blog marker cluster layer
+  blogMarkerClusterGroupLayer: L.MarkerClusterGroup = L.markerClusterGroup();
+
+  private router = inject(Router);
   private blogsStore = inject(Store<IBlogsState>);
+  private subscription = new Subscription();
+
   blogs$ = this.blogsStore.select(selectFetched);
-  // icon = {
-  //   icon: L.icon({
-  //     iconSize: [25, 41],
-  //     iconAnchor: [13, 0],
-  //     // specify the path here
-  //     iconUrl: './node_modules/leaflet/dist/images/marker-icon.png',
-  //     shadowUrl: './node_modules/leaflet/dist/images/marker-shadow.png',
-  //   }),
-  // };
 
   ngOnInit() {
-    const iconRetinaUrl = 'assets/media/marker-icon-2x.png';
-    const iconUrl = 'assets/media/marker-icon.png';
-    const shadowUrl = 'assets/media/marker-shadow.png';
-    Marker.prototype.options.icon = icon({
-      iconRetinaUrl,
-      iconUrl,
-      shadowUrl,
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      tooltipAnchor: [16, -28],
-      shadowSize: [41, 41],
-    });
+    console.log('component initialized');
+  }
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+    this.map.remove();
+  }
+
+  onMapReady(map: L.Map) {
+    console.log('map-icon ready', map);
+    this.map = map;
     this.initializeMap();
   }
 
   initializeMap() {
-    this.map = L.map('map').setView(
-      [-37.81638808755261, 144.9566792258329],
-      13
+    console.log('initialize map');
+    // convert the blog to marker observables
+    const markerClusterData$ = this.blogs$.pipe(
+      map(blogs => this.transformBlogsToMarkers(blogs)),
+      distinctUntilChanged(),
+      catchError(error => {
+        console.error('Error processing blog data:', error);
+        return of([]);
+      })
     );
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-    }).addTo(this.map);
+    this.subscription.add(
+      markerClusterData$.subscribe(markerData => {
+        try {
+          this.blogMarkerClusterGroupLayer.addLayers(markerData);
+        } catch (error) {
+          console.error('Error updating marker cluster:', error);
+        }
+      })
+    );
+  }
 
-    // L.geoJSON(geojsonFeature).addTo(this.map);
-    // L.marker([-37.8, 144.9]).addTo(this.map);
-    // add all points from blogs$ to map
-    this.blogs$.subscribe(blogs => {
-      blogs?.forEach(blog => {
-        L.marker([blog.location?.lat ?? 0, blog.location?.lng ?? 0]).addTo(
-          this.map
-        );
-      });
+  transformBlogsToMarkers(blogs: IBlogs[]): L.Layer[] {
+    return blogs.map(blog => {
+      const popupContent = `
+        <mat-card class="card">
+            <mat-card-header class="card-title">${blog.title}</mat-card-header>
+            <mat-card-content class="card-text">
+                <p>${blog.content}</p>
+                <button id="view-blog-${blog.id}" class="btn btn-primary">View</button>
+            </mat-card-content>
+        </mat-card>
+        `;
+      const blogMarker = L.marker(
+        [blog.location?.lat ?? 0, blog.location?.lng ?? 0],
+        {
+          title: blog.title,
+          riseOnHover: true,
+          icon: blogMarkerIcon,
+        }
+      ).bindPopup(popupContent);
+
+      // blogMarker.on('popupopen', () => {
+      //   const button = document.getElementById(`view-blog-${blog.id}`);
+      //   button?.addEventListener('click', async () => {
+      //     await this.router.navigate(['/blog/list', blog.id]).then(r => r);
+      //   });
+      // });
+      return blogMarker;
     });
   }
 }
