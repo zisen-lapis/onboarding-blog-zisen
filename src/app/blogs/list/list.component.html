@@ -1,8 +1,57 @@
-<h2 *ngrxLet="profile$ | async as p">Blogs of {{ p?.name }}</h2>
-<article *ngFor="let blog of (blogs$ | async)">
-  <section>
-    <h3><a [routerLink]="['/blogs/list/',blog.id]">{{blog.title}}</a> </h3>
-    <p>created by {{blog.author}} on {{blog.editedTime | date:"dd/MM/YYYY HH:mm"}}</p>
-  </section>
-  <p>{{blog.content | slice:0:20}} ...</p>
-</article>
+<h2 *ngIf="profile$ | async as profile">Posts of {{ profile?.name }}</h2>
+<section class="post-container">
+  <h2 style="width: 100vw">local blogs</h2>
+  @for (blog of blogs$ | async; track blog) {
+    <mat-card class="blog-card" [routerLink]="['/blogs/list/', blog.id]">
+      <mat-card-header>
+        <mat-card-title>{{ blog.title }}</mat-card-title>
+        <mat-card-subtitle
+          >Created by {{ blog.author }} on
+          {{ blog.editedTime | date: 'dd/MM/YYYY HH:mm' }}</mat-card-subtitle
+        >
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ blog.content | slice: 0 : 20 }} ...</p>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>
+<ng-container *ngrxLet="viewState$ | async as viewState">
+  @switch (viewState) {
+    @case (ViewStatus.LOADING) {
+      <mat-progress-spinner
+        mode="indeterminate"
+        class="spinner"
+        color="primary"></mat-progress-spinner>
+    }
+    @case (ViewStatus.ERROR) {
+      <section class="error-container">
+        <p>Something went wrong</p>
+        <button mat-raised-button color="primary" (click)="fetchBlogs()">
+          Retry
+        </button>
+      </section>
+    }
+    @case (ViewStatus.LOADED) {
+      <h2>fetched blogs</h2>
+      <section class="post-container">
+        @for (blog of fetchedBlogs$ | async; track blog) {
+          <mat-card class="blog-card" [routerLink]="['/blogs/list/', blog.id]">
+            <mat-card-header>
+              <mat-card-title>{{ blog.title }}</mat-card-title>
+              <mat-card-subtitle
+                >Created by {{ blog.author }} on
+                {{
+                  blog.editedTime | date: 'dd/MM/YYYY HH:mm'
+                }}</mat-card-subtitle
+              >
+            </mat-card-header>
+            <mat-card-content>
+              <p>{{ blog.content | slice: 0 : 20 }} ...</p>
+            </mat-card-content>
+          </mat-card>
+        }
+      </section>
+    }
+  }
+</ng-container>

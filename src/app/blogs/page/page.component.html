@@ -1,9 +1,36 @@
-<article [formGroup]="blog" *ngrxLet="blog$ | async as b" (click)="editBlog()">
-    <h3 *ngIf="!isEditing">{{ b?.title?? "" }}</h3>
-    <input *ngIf="isEditing" placeholder="Title" formControlName="title"/>
-    <p *ngIf="!isEditing">{{ b?.content?? "" }}</p>
-    <p>
-        <textarea *ngIf="isEditing" placeholder="Content" formControlName="content"></textarea>
-    </p>
-    <button *ngIf="isEditing" (click)="updateBlog()">Update</button>
+<article
+  [formGroup]="blog"
+  *ngrxLet="blog$ | async as b"
+  class="page-container">
+  @if (isEditing) {
+    <h2>Editing "{{ b?.title ?? '' }}" ...</h2>
+  }
+  @if (!isEditing) {
+    <h2>{{ b?.title ?? '' }}</h2>
+  }
+  @if (b?.author ?? '' !== '') {
+    <h3 class="author">by {{ b?.author ?? '' }}</h3>
+  }
+  @if (isEditing) {
+    <input placeholder="Title" formControlName="title" class="wide-input" />
+  }
+  @if (!isEditing) {
+    <p>{{ b?.content ?? '' }}</p>
+  }
+  @if (isEditing) {
+    <textarea
+      placeholder="Content"
+      formControlName="content"
+      rows="10"
+      cols="50"
+      class="wide-input"></textarea>
+  }
+  @if (!isEditing) {
+    <button mat-raised-button (click)="editBlog()">Edit</button>
+  }
+  @if (isEditing) {
+    <button mat-raised-button color="accent" (click)="updateBlog()">
+      Update
+    </button>
+  }
 </article>

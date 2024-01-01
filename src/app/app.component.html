@@ -1,12 +1,14 @@
 <mat-toolbar color="primary">
   <span>Blog</span>
   <span class="spacer"></span>
-    <button mat-button routerLink="/list">Sample Posts</button>
-    <button mat-button routerLink="/blogs/list">User's Posts</button>
-    <button mat-button routerLink="/profile">Profile</button>
-    <button mat-button routerLink="/blogs/new">New Blog</button>
+  <button mat-button routerLink="/map" class="menu-button">Map</button>
+  <button mat-button routerLink="/blogs/list" class="menu-button">Posts</button>
+  <button mat-button routerLink="/profile" class="menu-button">Profile</button>
+  <button mat-raised-button color="warn" routerLink="/blogs/new" class="menu-button">New Blog</button>
+
 </mat-toolbar>
 
-
+<article>
   <router-outlet>
   </router-outlet>
+</article>

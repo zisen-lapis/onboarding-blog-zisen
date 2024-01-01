@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PostTwoComponent } from './post-two.component';
+import { MapComponent } from './map.component';
 
-describe('PostTwoComponent', () => {
-  let component: PostTwoComponent;
-  let fixture: ComponentFixture<PostTwoComponent>;
+describe('MapComponent', () => {
+  let component: MapComponent;
+  let fixture: ComponentFixture<MapComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PostTwoComponent]
+      imports: [MapComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(PostTwoComponent);
+    fixture = TestBed.createComponent(MapComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
